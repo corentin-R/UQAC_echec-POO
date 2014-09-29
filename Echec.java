@@ -12,21 +12,65 @@ public class Echec{
 		COrdi Ordi = new COrdi (P);
 
 		while (true){
+			char roque = '\0';
+			int typeRoque= 0;
 			char initialX = '\0';
 			char initialY = '\0';
 
 			char finalX = '\0';
 			char finalY = '\0';
-			do{
+			choixCoup :do{
 				P.Afficher();
+				System.out.print ("Votre coup? (R ou r pour un roque)");	
+				roque = Lire();
 				
-				System.out.print ("Votre coup? ");				
-				initialX = Lire();
-				initialY = Lire();
+				if(roque == 'R' || roque =='r')
+				{
+					ViderBuffer();
+					boolean roqueOk = false;
+					/*choixRoque :*/while(!roqueOk)
+					{
+						System.out.println("Quel type de roque voulez vous faire      ?");
+						System.out.println("1 : Petit roque legal");
+						System.out.println("2 : Petit roque triche");
+						System.out.println("3 : Grand roque");
+						char type = Lire();
+						typeRoque = Character.getNumericValue(type);
+						
+						/**
+						 * FIXME Le petit roque legal/grand roque ne fonctionne pas
+						 * de maniere de normale quand un pion menace une case vide 
+						 * entre le roi et la tour
+						 */
+						switch(typeRoque)
+						{
+						case 1:
+							if(P.jouerPetitRoqueLegal()) roqueOk = true; break;
+						case 2:
+							if(P.jouerPetitRoqueTriche()) roqueOk = true; break;
+						case 3:
+							if(P.jouerGrandRoque()) roqueOk = true; break;
+						default: 
+							System.out.println("Incorrect !"); break;
+						}
+						ViderBuffer();
+						
+						if(!roqueOk)
+							continue choixCoup; //retourner au while principal aprÃ¨s le coup
+						
+						else
+							break choixCoup;
+					}
+				}
+				
+				else
+				{
+					initialX = roque; //1er char != 'R'
+					initialY = Lire();
 
-				finalX = Lire();
-				finalY = Lire();
-				
+					finalX = Lire();
+					finalY = Lire();	
+				}
 				ViderBuffer();
 			}
 
@@ -36,12 +80,12 @@ public class Echec{
 		}
 	}
 
-	private static char Lire(){		//Static parqu'utilisé par le main
+	private static char Lire(){		//Static parqu'utilisï¿½ par le main
 		char C = 'A';				//Initialisation est obligatoire
 		boolean OK;
 		do{
-			OK = true;				//On commence à OK à chaque boucle
-			try{					//Préviens qu'il peut y avoir une exception
+			OK = true;				//On commence ï¿½ OK ï¿½ chaque boucle
+			try{					//Prï¿½viens qu'il peut y avoir une exception
 				C = (char)System.in.read();
 			}
 
@@ -60,7 +104,7 @@ public class Echec{
 			while (System.in.read() != '\n');
 		}
 		catch (java.io.IOException e){		//Attrape l'exception
-			//S'exécute s'il y a une erreur Rien
+			//S'exï¿½cute s'il y a une erreur Rien
 		}
 	}
 }

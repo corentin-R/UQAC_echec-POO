@@ -4,8 +4,8 @@ package ca.uqac.pat.echec.pieces;
 import ca.uqac.pat.echec.Plateau;
 
 /**
- * Cette classe est parente de toutes les piËces.  Elle gËre les dÈplacements
- * de mÍme que l'affichage de la grille
+ * Cette classe est parente de toutes les pi√®ces.  Elle g√®re les d√©placements
+ * de m√™me que l'affichage de la grille
  * @see ca.uqac.pat.Echec
  */
 abstract public class Piece implements Cloneable
@@ -14,13 +14,22 @@ abstract public class Piece implements Cloneable
 
 	protected 	Plateau 	Jeu;
 	protected 	int 		CoulBlanc;
-	protected 	int 		PosX, PosY;
+	public 	int 		PosX, PosY;
+	
+	//////////////////d√©but modification////////////////////////////////////////////////////
+	
+	//pour savoir si la piece vient de bouger
+	protected	boolean 	justMove = false;
+	//et si un coup en passant est possible sur cette pi√®ce
+	protected	boolean		priseEnPassantPossible = false;
+	
+	//////////////////fin modification///////////////////////////////////////////////////////
 
 	/**
-	 * Constructeur minimal d'une PiËce, utilisÈ par CaseVide.
-	 * @param J C'est le plateau de jeu sur lequel la Piece est posÈe.
+	 * Constructeur minimal d'une Pi√®ce, utilis√© par CaseVide.
+	 * @param J C'est le plateau de jeu sur lequel la Piece est pos√©e.
 	 * @param PX C'est la position en abscisse dans le tableau.
-	 * @param PY C'est la position en ordonnÈe dans le tableau.
+	 * @param PY C'est la position en ordonn√©e dans le tableau.
 	 */
 	public Piece(Plateau J, int PX, int PY){		//C'est une case vide !!!
 		this(J, 0, 0, PX, PY);
@@ -28,7 +37,7 @@ abstract public class Piece implements Cloneable
 
 	/**
 	 * Constructeur par copie.
-	 * @param original l'objet ‡ copier.
+	 * @param original l'objet √† copier.
 	 */
 	public Piece(Piece original){
 		this(	original.Jeu, 
@@ -40,12 +49,12 @@ abstract public class Piece implements Cloneable
 	
 	
 	/**
-	 * Constructeur complet d'une PiËce.
-	 * @param J C'est le plateau de jeu sur lequel la Piece est posÈ.
-	 * @param V C'est la valeur de la piËce ( 0 : case vide )
-	 * @param CB C'est la couleur de la piËce ( 1: Blanc, -1:Noir )
+	 * Constructeur complet d'une Pi√®ce.
+	 * @param J C'est le plateau de jeu sur lequel la Piece est pos√©.
+	 * @param V C'est la valeur de la pi√®ce ( 0 : case vide )
+	 * @param CB C'est la couleur de la pi√®ce ( 1: Blanc, -1:Noir )
 	 * @param PX C'est la position en abscisse dans le tableau.
-	 * @param PY C'est le position en ordonnÈe dans le tableau.
+	 * @param PY C'est le position en ordonn√©e dans le tableau.
 	 */
 	public Piece (Plateau J, int V, int CB, int PX, int PY){
 		Jeu 		= J;
@@ -56,15 +65,15 @@ abstract public class Piece implements Cloneable
 	}
 
 	/**
-	 * C'est la mÈthode qui permet de bouger une piece de (incX, incY), si 
+	 * C'est la m√©thode qui permet de bouger une piece de (incX, incY), si 
 	 * le chemin est libre.
-	 * @param incX Valeur du dÈplacement horizontal.
-	 * @param incY Valeur du dÈplacement vertical.
-	 * @return vrai si la voie est libre et l'arrivÈe vide ou ennemie, faux sinon
+	 * @param incX Valeur du d√©placement horizontal.
+	 * @param incY Valeur du d√©placement vertical.
+	 * @return vrai si la voie est libre et l'arriv√©e vide ou ennemie, faux sinon
 	 */
 	public boolean Bouger(int Joueur, int incX, int incY, boolean PourVrai)
 	{
-		if (CoulBlanc != Joueur) return false;		// si pas ta piËces
+		if (CoulBlanc != Joueur) return false;		// si pas ta pi√®ces
 		if(incX != 0 &&  incY != 0 && Math.abs(incX) != Math.abs(incY))
 			return false;							// pas droit ni diag
 
@@ -82,6 +91,20 @@ abstract public class Piece implements Cloneable
 
 					Jeu.setPos(PosX, PosY, this);
 				}
+				
+				//////////////////d√©but modification//////////////////////////////////////////////////// 
+				
+				//on met justMove=false pour toutes les pi√®ces du jeu
+				for(int i=0;i<8;i++){
+					for(int j=0;j<8;j++){
+						Jeu.Case(i,j).setJustMove(false);
+					}
+				}
+				//on met remet justMove=true juste pour la pi√®ce en question
+				this.justMove=true;
+				
+				//////////////////fin modification//////////////////////////////////////////////////// 
+				
 				return true;
 			}
 		}
@@ -91,14 +114,14 @@ abstract public class Piece implements Cloneable
 	}
 
 	/**	
-	 *	Fonction de vÈrification qui vÈrifie si une case est vide, sans piËce.
+	 *	Fonction de v√©rification qui v√©rifie si une case est vide, sans pi√®ce.
 	 * @return Vrai si la case est vide, faux sinon. 
 	 */
 	public boolean isCaseVide()	{	return (Valeur == 0);	}
 
 	/**
 	 * Encapsulateur de l'attribut CoulBlanc.
-	 * @return La coule de la piËce (1 si blanc, -1 si noir, 0 si vide)
+	 * @return La coule de la pi√®ce (1 si blanc, -1 si noir, 0 si vide)
 	 */
 	public int retCoulBlanc()	{	return CoulBlanc;		}
 
@@ -137,4 +160,18 @@ abstract public class Piece implements Cloneable
 		}
 		return null;
 	}
+	
+	//////////////////d√©but modification//////////////////////////////////////////////////// 	
+	
+	public void setJustMove(boolean b){
+		justMove=b;
+	}
+	public boolean getJustMove(){
+		return justMove;
+	}
+	public boolean getPriseEnPassantPossible()	{
+		return priseEnPassantPossible;
+	}
+	
+	//////////////////fin  modification///////////////////////////////////////////////////////
 } 
